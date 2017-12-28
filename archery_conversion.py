@@ -11,7 +11,7 @@ args = parser.parse_args()
 
 # all units in cm
 
-def shoot_arrows(num_shots, sd, print_all_shots=False):
+def shoot_arrows(num_shots, sd):
 
     offsets = []
     score = 0
@@ -37,12 +37,6 @@ def shoot_arrows(num_shots, sd, print_all_shots=False):
             if offset < score_width:
                 score = score + 1
 
-    if print_all_shots:
-        pprint.pprint(sorted(offsets))
-        hits = [offset for offset in offsets if offset < hit_rate_target_size]
-        hit_rate = len(hits)/float(len(offsets))
-        print("Hit target: %s" % hit_rate)
-        print("Hit target %s/20" % round(hit_rate*20.0))
     return score
 
 target_score = args.score
