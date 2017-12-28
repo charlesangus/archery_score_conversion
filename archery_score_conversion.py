@@ -8,28 +8,41 @@ BASE_TARGET_DIAMETER = 122
 BASE_RANGE = 7000
 PERFECT_SCORE = 720
 
-def shoot_arrows(num_shots, sd):
+def shoot_arrows(num_shots, sd, gnas=False):
 
     offsets = [abs(random.gauss(0, sd)) for i in range(num_shots)]
     score = 0
     target_size = BASE_TARGET_DIAMETER / 2.0
-    score_widths = [BASE_TARGET_DIAMETER / 2.0,
-              (BASE_TARGET_DIAMETER * .9) / 2.0,
-              (BASE_TARGET_DIAMETER * .8) / 2.0,
-              (BASE_TARGET_DIAMETER * .7)/ 2.0,
-              (BASE_TARGET_DIAMETER * .6) / 2.0,
-              (BASE_TARGET_DIAMETER * .5) / 2.0,
-              (BASE_TARGET_DIAMETER * .4) / 2.0,
-              (BASE_TARGET_DIAMETER * .3) / 2.0,
-              (BASE_TARGET_DIAMETER * .2) / 2.0,
-              (BASE_TARGET_DIAMETER * .1) / 2.0,
-              ]
+    if not gnas:
+        score_widths = [BASE_TARGET_DIAMETER / 2.0,
+                (BASE_TARGET_DIAMETER * .9) / 2.0,
+                (BASE_TARGET_DIAMETER * .8) / 2.0,
+                (BASE_TARGET_DIAMETER * .7)/ 2.0,
+                (BASE_TARGET_DIAMETER * .6) / 2.0,
+                (BASE_TARGET_DIAMETER * .5) / 2.0,
+                (BASE_TARGET_DIAMETER * .4) / 2.0,
+                (BASE_TARGET_DIAMETER * .3) / 2.0,
+                (BASE_TARGET_DIAMETER * .2) / 2.0,
+                (BASE_TARGET_DIAMETER * .1) / 2.0,
+                ]
+            
+        for offset in offsets:
+            for score_width in score_widths:
+                if offset < score_width:
+                    score = score + 1
+    else:
+        score_widths = [BASE_TARGET_DIAMETER / 2.0,
+                (BASE_TARGET_DIAMETER * .8) / 2.0,
+                (BASE_TARGET_DIAMETER * .6) / 2.0,
+                (BASE_TARGET_DIAMETER * .4) / 2.0,
+                (BASE_TARGET_DIAMETER * .2) / 2.0,
+                ]
+            
+        for offset in offsets:
+            for score_width in score_widths:
+                if offset < score_width:
+                    score = score + 2
         
-    for offset in offsets:
-        for score_width in score_widths:
-            if offset < score_width:
-                score = score + 1
-
     return score
 
 def find_best_fit_sd(target_score,
@@ -120,6 +133,9 @@ def main():
     parser.add_argument('--tolerance', type=int, help='Tolerance when searching for the best fit standard deviation for the given score. Larger numbers are faster but less accurate.', default=3)
     parser.add_argument('--trials', type=int, help='How many times to run the best fit standard deviation search for the given score. LArger numbers are slower but more accurate.', default=100)
     parser.add_argument('--num_shots', type=int, help='How many shots to take at the new range and target size to determine the hit rate. Larger numbers are slower but more accurate', default=10000)
+    parser.add_argument('--gnas', action='store true', help="If the round you're using as input uses GNAS 5-zone scoring on a 122cm boss, set this flag.")
+    parser.add_argument('--base_arrows', type=int, default=72, help="If the round you're using as input uses a different number of arrows than 72, enter that number here.")
+    parser.add_argument('--base_range', type=int, default=70, help="If the round you're using as input uses a different range than 70m, enter that range here (in meters).")
     args = parser.parse_args()
 
     target_score = args.score
