@@ -32,7 +32,7 @@ def shoot_arrows(num_shots, sd, gnas=False):
                 (BASE_TARGET_DIAMETER * .2) / 2.0,
                 (BASE_TARGET_DIAMETER * .1) / 2.0,
                 ]
-            
+
         for offset in offsets:
             for score_width in score_widths:
                 if offset < score_width:
@@ -44,9 +44,9 @@ def shoot_arrows(num_shots, sd, gnas=False):
                 (BASE_TARGET_DIAMETER * .4) / 2.0,
                 (BASE_TARGET_DIAMETER * .2) / 2.0,
                 ]
-        
+
         # should be 1, 3, 5, 7, 9
-        
+
         for offset in offsets:
             if offset < score_widths[0]:
                 score = score + 1
@@ -58,12 +58,12 @@ def shoot_arrows(num_shots, sd, gnas=False):
                 score = score + 2
             if offset < score_widths[4]:
                 score = score + 2
-                
+
         #for offset in offsets:
             #for score_width in score_widths:
                 #if offset < score_width:
                     #score = score + 2
-    
+
     return score
 
 def find_best_fit_sd(target_score,
@@ -76,11 +76,11 @@ def find_best_fit_sd(target_score,
     max_sd = BASE_TARGET_DIAMETER * 2
     last_sd = 0
     sd = BASE_TARGET_DIAMETER
-    
+
     last_score = 0
     score = shoot_arrows(BASE_ARROWS, sd, gnas=GNAS)
     difference = abs(target_score - score)
-    
+
     while difference > tolerance:
         if score > target_score and last_score > target_score:
             # then SD is too small, must increase
@@ -113,7 +113,7 @@ def find_best_fit_sd(target_score,
         last_score = score
         score = shoot_arrows(BASE_ARROWS, sd, gnas=GNAS)
         difference = abs(target_score - score)
-    
+
     return sd
 
 def find_average_best_fit_sd(target_score,
@@ -154,28 +154,28 @@ def find_new_hit_rate(target_score,
     radian_offsets = [abs(rand_func(0, theta_of_final_sd)) for i in range(num_shots)]
     hits = [shot for shot in radian_offsets if shot < theta_of_desired_target]
     hit_rate = len(hits) / float(len(radian_offsets))
-    
-    
+
+
     # trying different way of calculatiing hit rate
-    final_sd_at_target_range = final_sd / (desired_range / BASE_RANGE)
+    final_sd_at_target_range = final_sd / (BASE_RANGE / desired_range)
     offsets = [abs(rand_func(0, final_sd_at_target_range)) for i in range(num_shots)]
     hits = [shot for shot in offsets if shot < desired_target_radius]
     hit_rate = len(hits) / float(len(radian_offsets))
-    
+
     return hit_rate
 
 def main():
-        
+
     parser = argparse.ArgumentParser(description='Take a score out of 720 from an archery competition (122cm target at 70m, 72 shots, scores from 0-10 per shot) and convert it to a hit rate for a given target range and target size.')
     parser.add_argument('score', metavar='720 score', type=int, help="Score to use as a definition of our putative archer's abilit.")
-    parser.add_argument('desired_range', metavar='target range', type=int, help='How far the output target is from the shooter, in meters.')
-    parser.add_argument('desired_target_diameter', metavar='target diameter', type=int, help='Diameter of the desired target in cm. Targets are always circular.')
-    parser.add_argument('--tolerance', type=int, help='Tolerance when searching for the best fit standard deviation for the given score. Larger numbers are faster but less accurate.', default=3)
+    parser.add_argument('desired_range', metavar='target range', type=float, help='How far the output target is from the shooter, in meters.')
+    parser.add_argument('desired_target_diameter', metavar='target diameter', type=float, help='Diameter of the desired target in cm. Targets are always circular.')
+    parser.add_argument('--tolerance', type=float, help='Tolerance when searching for the best fit standard deviation for the given score. Larger numbers are faster but less accurate.', default=3.0)
     parser.add_argument('--trials', type=int, help='How many times to run the best fit standard deviation search for the given score. LArger numbers are slower but more accurate.', default=100)
     parser.add_argument('--num_shots', type=int, help='How many shots to take at the new range and target size to determine the hit rate. Larger numbers are slower but more accurate', default=10000)
     parser.add_argument('--gnas', action='store_true', help="If the round you're using as input uses GNAS 5-zone scoring on a 122cm boss, set this flag.")
     parser.add_argument('--base_arrows', type=int, default=72, help="If the round you're using as input uses a different number of arrows than 72, enter that number here.")
-    parser.add_argument('--base_range', type=int, default=70, help="If the round you're using as input uses a different range than 70m, enter that range here (in meters).")
+    parser.add_argument('--base_range', type=float, default=70.0, help="If the round you're using as input uses a different range than 70m, enter that range here (in meters).")
     args = parser.parse_args()
 
     target_score = args.score
@@ -185,7 +185,7 @@ def main():
     tolerance = args.tolerance
     trials = args.trials
     num_shots = args.num_shots
-    
+
     GNAS = args.gnas
     BASE_ARROWS = args.base_arrows
     BASE_RANGE = args.base_range * 100
@@ -209,4 +209,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
