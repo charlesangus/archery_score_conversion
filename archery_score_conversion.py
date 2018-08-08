@@ -205,7 +205,7 @@ def main():
     print('Input: {target_score} at range {BASE_RANGE}m and target diameter {BASE_TARGET_DIAMETER}cm'.format(target_score=target_score, BASE_RANGE=BASE_RANGE / 100, BASE_TARGET_DIAMETER=BASE_TARGET_DIAMETER))
     print('Converted to: range {desired_range}m and target diameter {desired_target_diameter}cm'.format(desired_range=args.desired_range, desired_target_diameter=args.desired_target_diameter))
     print('Hit rate: %s' % hit_rate)
-    print('Hit rate %s/20' % hit_rate_twenty)
+    print('Hit rate %s/20' % int(hit_rate_twenty))
 
 if __name__ == "__main__":
     main()
